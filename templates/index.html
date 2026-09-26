@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Video Downloader</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; text-align: center; padding: 50px; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); display: inline-block; width: 100%; max-width: 500px; }
+        input[type="text"] { width: 80%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        #status { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Simple Video Downloader</h2>
+        <p>I-paste ang link sa video sa ubos:</p>
+        <input type="text" id="urlInput" placeholder="https://www.youtube.com/watch?v=...">
+        <br>
+        <button onclick="startDownload()">Download Video</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        async function startDownload() {
+            const url = document.getElementById('urlInput').value;
+            const statusDiv = document.getElementById('status');
+            
+            if (!url) {
+                alert("Palihog pagbutang og valid URL!");
+                return;
+            }
+
+            statusDiv.innerHTML = "Nag-download pa, palihog hulata...";
+
+            try {
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.innerHTML = `Nindot! Nahuman na. <a href="${data.download_url}" download>I-klik diri aron i-save ang file</a>`;
+                } else {
+                    statusDiv.innerHTML = `Sayop: ${data.error}`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `Naay nahitabong problema: ${error}`;
+            }
+        }
+    </script>
+</body>
+</html>
