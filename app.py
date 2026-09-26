@@ -4,7 +4,6 @@ import yt_dlp
 
 app = Flask(__name__)
 
-# Sigurohon nato nga naay direktoryo para sa mga na-download nga videos
 DOWNLOAD_FOLDER = 'downloads'
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
@@ -22,10 +21,12 @@ def download_video():
         return jsonify({'error': 'Walay gihatag nga URL!'}), 400
 
     try:
-        # Configuration para sa yt-dlp
+        # Gi-update ang yt_dlp options para malikayan ang bot block
         ydl_opts = {
             'format': 'best[ext=mp4]/best',
             'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
+            'noplaylist': True,
+            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
